@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Davron Build CRM</title>
+<style>
+body{font-family:-apple-system,sans-serif;background:#f4f4f5;margin:0;padding:16px;color:#111}
+.card{background:#fff;border-radius:24px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px}
+.house{width:140px;height:140px;border-radius:50%;object-fit:cover;border:4px solid #7c3aed}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{background:#fff;border:none;border-radius:20px;padding:20px;font-size:18px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #eee}
+input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #ddd;margin-top:10px;box-sizing:border-box}
+.save{width:100%;padding:15px;background:#7c3aed;color:#fff;border:none;border-radius:16px;font-size:18px;margin-top:12px}
+.exp{padding:10px 0;border-bottom:1px solid #eee}
+a{text-decoration:none;font-size:24px}
+.bottom{position:sticky;bottom:0;background:#fff;border-radius:24px;padding:16px;display:flex;justify-content:space-around;box-shadow:0 -4px 12px rgba(0,0,0,.08)}
+</style>
+</head>
+<body>
+
+<h1>Привет, Даврон 👋</h1>
+
+<div class="card">
+<div class="top">
+<div>
+<div style="color:#666">Текущий объект</div>
+<h2>Дом 1</h2>
+<div>📍 Ташкент</div><br>
+<a href="https://maps.google.com" style="font-size:16px;color:#7c3aed">🗺️ Google Map</a>
+</div>
+<img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=1200&auto=format&fit=crop" class="house">
+</div>
+</div>
+
+<div class="grid">
+<button class="btn" onclick="go('masters')">👷<br>Мастера</button>
+<button class="btn" onclick="go('suppliers')">🏪<br>Поставщики</button>
+<button class="btn" onclick="go('expenses')">💸<br>Расходы</button>
+<button class="btn" onclick="go('add')">➕<br>Добавить</button>
+</div>
+
+<div class="card" id="masters">
+<h2>Мастера</h2>
+
+<div class="item"><div><b>👷 Otabek</b><br><small>Кафельщик</small></div><a href="tel:+998977091783">📞</a></div>
+<div class="item"><div><b>⚡ Aziz</b><br><small>Электрик</small></div><a href="tel:+998974020880">📞</a></div>
+<div class="item"><div><b>🧱 Abbos</b><br><small>Штукатурка</small></div><a href="tel:+998944580570">📞</a></div>
+<div class="item"><div><b>🏗️ Umid</b><br><small>Строительство</small></div><a href="tel:+998978904060">📞</a></div>
+
+</div>
+
+<div class="card" id="suppliers">
+<h2>Поставщики</h2>
+
+<div class="item"><div><b>🏪 Inshoat</b><br><small>Строймагазин</small></div><a href="tel:+998997606333">📞</a></div>
+<div class="item"><div><b>🏭 BSD</b><br><small>Бетон</small></div><a href="tel:+998951466560">📞</a></div>
+<div class="item"><div><b>🚚 Shavka</b><br><small>Песок и щебень</small></div><a href="tel:+998997334111">📞</a></div>
+
+</div>
+
+<div class="card" id="add">
+<h2>Добавить расход</h2>
+<select id="person">
+<option>Прочие расходы</option>
+<option>Otabek</option>
+<option>Aziz</option>
+<option>Abbos</option>
+<option>BSD</option>
+</select>
+<input id="title" placeholder="Описание">
+<input id="amount" placeholder="Сумма">
+<button class="save" onclick="saveExpense()">Сохранить расход</button>
+</div>
+
+<div class="card" id="expenses">
+<h2>История расходов</h2>
+<div id="list"></div>
+</div>
+
+<div class="bottom">
+<div>🏠</div>
+<div>📦</div>
+<div>🗺️</div>
+<div>👤</div>
+</div>
+
+<script>
+function go(id){
+document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+
+function saveExpense(){
+let person=document.getElementById('person').value;
+let title=document.getElementById('title').value;
+let amount=document.getElementById('amount').value;
+
+if(!title||!amount){
+alert('Введите данные');
+return;
+}
+
+let data=JSON.parse(localStorage.getItem('davron_expenses')||'[]');
+data.unshift({person,title,amount,date:new Date().toLocaleDateString()});
+localStorage.setItem('davron_expenses',JSON.stringify(data));
+
+document.getElementById('title').value='';
+document.getElementById('amount').value='';
+
+render();
+alert('Расход сохранён');
+}
+
+function render(){
+let data=JSON.parse(localStorage.getItem('davron_expenses')||'[]');
+let html='';
+data.forEach(i=>{
+html+=`<div class="exp"><b>${i.person}</b><br>${i.title} — 💰 ${i.amount}<br><small>${i.date}</small></div>`;
+});
+document.getElementById('list').innerHTML=html||'Нет расходов';
+}
+render();
+</script>
+
+</body>
+</html>
